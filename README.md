@@ -1,5 +1,7 @@
 # SSSSSnake game
 
+#Project is in development
+
 Simple snake game made in python
 
 Autors: D1N3SHh & dzidek & Naris404
