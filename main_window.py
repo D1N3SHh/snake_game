@@ -1,5 +1,8 @@
 #main window module
 
+#modules
+import game
+
 #libraries
 import sys, time
 from PyQt5.QtCore import *
@@ -37,9 +40,8 @@ class main_window(QWidget):
 
     #starting new game
     def new_game(self):
-        #will be creating object of game class
-        a = 1
-
+        game.run()
+        
     #quit function
     def quit_function(self):
         sys.exit(0)
