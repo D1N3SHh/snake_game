@@ -7,6 +7,12 @@ import random
 pygame.init()
 
 def run():
+
+    #Tickrate values
+    clock = pygame.time.Clock()
+    delta = 0.0
+    max_tps = 10
+
     y = 1
     x = 0
     height = random.randint(0,1920)
@@ -21,19 +27,24 @@ def run():
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 sys.exit(0)
 
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_w]:
-            y = -1 # -1
-            x = 0
-        if keys[pygame.K_s]:
-            y = 1 # 1
-            x = 0
-        if keys[pygame.K_a]:
-            x = -1 # -1
-            y = 0
-        if keys[pygame.K_d]:
-            x = 1 # 1
-            y = 0
+        #Tickrate
+        delta += clock.tick()/1000.0
+        while delta > 1 / max_tps:
+            delta -= 1 / max_tps
+
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_w]:
+                y = -1 # -1
+                x = 0
+            if keys[pygame.K_s]:
+                y = 1 # 1
+                x = 0
+            if keys[pygame.K_a]:
+                x = -1 # -1
+                y = 0
+            if keys[pygame.K_d]:
+                x = 1 # 1
+                y = 0
 
         snake.y += y
         snake.x += x
