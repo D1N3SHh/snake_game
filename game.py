@@ -4,18 +4,52 @@ import pygame
 import sys
 import random
 import time
+import re
 
 pygame.init()
+
+#Snake printing and self colision detection
+def snake_body(head,body,score=0):
+    global screen
+    #colision detection
+    if str(head) in body:
+        print("game over")
+        print("score: ",score)
+        sys.exit(0)
+
+    #body length
+    body.append(str(head))
+    if len(body) > score:
+        del(body[0])
+    
+
+    print("h ", head)
+    print("b ", body)
+    #body printing
+    for position in body:
+        left = re.search("[0-9]*,",position)
+        top = re.search(", [0-9]*,", position)
+        # print(left.decode())
+        # position = re.search("[0-9]*, [0-9]*,",position)
+        print(left.start())
+
+        tail = pygame.Rect(int(left), int(top), 10, 10)
+        pygame.draw.rect(screen,(0,255,0),tail)
 
 def run():
 
     #Tickrate values
     clock = pygame.time.Clock()
     delta = 0.0
-    max_tps = 10
+    max_tps = 100
 
+    #Deafult values
     y = 10
     x = 0
+    score = 10
+    body = []
+    global screen
+
     while True:
         height = random.randint(0,1920)
         width = random.randint(0,1080)
@@ -57,6 +91,7 @@ def run():
         snake.x += x
         time.sleep(0.05)
         if snake.y == width and snake.x == height:
+            score +=1
             while True:
                 height = random.randint(0,1920)
                 width = random.randint(0,1080)
@@ -76,5 +111,6 @@ def run():
 
         screen.fill((0,0,0))
         pygame.draw.rect(screen,(0,255,0),snake)
+        snake_body(snake,body,score)
         pygame.draw.rect(screen,(255,0,0),food)
         pygame.display.flip()
