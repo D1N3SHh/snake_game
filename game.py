@@ -18,23 +18,13 @@ def snake_body(head,body,score=0):
         sys.exit(0)
 
     #body length
-    body.append(str(head))
+    body.append(pygame.Rect(head))
     if len(body) > score:
         del(body[0])
-    
 
-    print("h ", head)
-    print("b ", body)
     #body printing
-    for position in body:
-        left = re.search("[0-9]*,",position)
-        top = re.search(", [0-9]*,", position)
-        # print(left.decode())
-        # position = re.search("[0-9]*, [0-9]*,",position)
-        print(left.start())
-
-        tail = pygame.Rect(int(left), int(top), 10, 10)
-        pygame.draw.rect(screen,(0,255,0),tail)
+    for part in body:
+        pygame.draw.rect(screen, (0,255,0),part)
 
 def run():
 
