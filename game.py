@@ -4,8 +4,27 @@ import pygame
 import sys
 import random
 import time
+import re
 
 pygame.init()
+
+#Snake printing and self colision detection
+def snake_body(head,body,score=0):
+    global screen
+    #colision detection
+    if head in body:
+        print("game over")
+        print("score: ",score)
+        sys.exit(0)
+
+    #body length
+    body.append(pygame.Rect(head))
+    if len(body) > score:
+        del(body[0])
+
+    #body printing
+    for part in body:
+        pygame.draw.rect(screen, (0,255,0),part)
 
 def run():
 
@@ -13,9 +32,14 @@ def run():
     clock = pygame.time.Clock()
     delta = 0.0
     max_tps = 10
+
     #Constant values
     y = 10
     x = 0
+    score = 1
+    body = []
+    global screen
+
     while True:
         height = random.randint(0,1920)
         width = random.randint(0,1080)
@@ -60,6 +84,7 @@ def run():
         time.sleep(0.05)
         #Creating apple after eating
         if snake.y == width and snake.x == height:
+            score +=1
             while True:
                 height = random.randint(0,1920)
                 width = random.randint(0,1080)
@@ -68,7 +93,7 @@ def run():
                     break
                 else:
                     continue
-        #This should be deleted
+        #This should be deleted #So why is it here?
         if snake.x > 1921:
             snake.x = 0
         if snake.x < 0:
@@ -80,5 +105,6 @@ def run():
 
         screen.fill((0,0,0))
         pygame.draw.rect(screen,(0,255,0),snake)
+        snake_body(snake,body,score)
         pygame.draw.rect(screen,(255,0,0),food)
         pygame.display.flip()
