@@ -4,11 +4,10 @@ import pygame
 import sys
 import random
 import time
-import re
 
-pygame.init()
+#pygame.init()
 
-#Snake printing and self colision detection
+#Snake printing and self colision detection function
 def snake_body(head,body,score=0):
     global screen
     #colision detection
@@ -31,13 +30,14 @@ def run():
     #Tickrate values
     clock = pygame.time.Clock()
     delta = 0.0
-    max_tps = 10
+    max_tps = 100
 
     #Constant values
     y = 10
     x = 0
     score = 1
     body = []
+    direction = "down"
     global screen
 
     while True:
@@ -66,19 +66,25 @@ def run():
 
             #Snake turning
             keys = pygame.key.get_pressed()
-            if keys[pygame.K_w]:
-                y = -10
-                x = 0
-            if keys[pygame.K_s]:
-                y = 10
-                x = 0
-            if keys[pygame.K_a]:
-                x = -10
-                y = 0
-            if keys[pygame.K_d]:
-                x = 10
-                y = 0
-
+            if direction == "down" or direction == "up":
+                if keys[pygame.K_a]:
+                    x = -10
+                    y = 0
+                    direction = "left"
+                if keys[pygame.K_d]:
+                    x = 10
+                    y = 0
+                    direction = "right"
+            elif direction == "left" or direction == "right":
+                if keys[pygame.K_w]:
+                    y = -10
+                    x = 0
+                    direction = "up"
+                if keys[pygame.K_s]:
+                    y = 10
+                    x = 0
+                    direction = "down"
+            
         snake.y += y
         snake.x += x
         time.sleep(0.05)
