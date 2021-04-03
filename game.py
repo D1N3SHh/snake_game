@@ -30,11 +30,11 @@ def run():
     #Tickrate values
     clock = pygame.time.Clock()
     delta = 0.0
-    max_tps = 60
+    max_tps = 1000
 
     #Constant values
     y = 0
-    x = 50
+    x = 40
     score = 1
     body = []
     direction = "right"
@@ -44,12 +44,12 @@ def run():
         height = random.randint(0,1920)
         width = random.randint(0,1080)
         #Checking height and width to spawn apple at right place
-        if height%50 == 0 and width%50 == 0:
+        if height%40 == 0 and width%40 == 0:
             break
         else:
             continue
-    food = pygame.Rect(height,width,50,50)
-    snake = pygame.Rect(0,0,50,50)
+    food = pygame.Rect(height,width,40,40)
+    snake = pygame.Rect(0,0,40,40)
     screen = pygame.display.set_mode((1920,1080), pygame.FULLSCREEN)
     while True:
         #Checking output keys to exit program
@@ -68,23 +68,23 @@ def run():
             keys = pygame.key.get_pressed()
             if direction == "down" or direction == "up":
                 if keys[pygame.K_a]:
-                    x = -50
+                    x = -40
                     y = 0
                     direction = "left"
                 if keys[pygame.K_d]:
-                    x = 50
+                    x = 40
                     y = 0
                     direction = "right"
             elif direction == "left" or direction == "right":
                 if keys[pygame.K_w]:
-                    y = -50
+                    y = -40
                     x = 0
                     direction = "up"
                 if keys[pygame.K_s]:
-                    y = 50
+                    y = 40
                     x = 0
                     direction = "down"
-        time.sleep(0.2)
+        time.sleep(0.08)
         snake.y += y
         snake.x += x
         
@@ -94,24 +94,24 @@ def run():
             while True:
                 height = random.randint(0,1920)
                 width = random.randint(0,1080)
-                if height%50 == 0 and width%50 == 0:
-                    food = pygame.Rect(height,width,50,50)
+                if height%40 == 0 and width%40 == 0:
+                    food = pygame.Rect(height,width,40,40)
                     break
                 else:
                     continue
                 
         #Band colison detection
-        if snake.x > 1920:
+        if snake.x >= 1920:
             sys.exit(0)
         if snake.x < 0:
             sys.exit(0)
         if snake.y < 0:
             sys.exit(0)
-        if snake.y > 1080:
+        if snake.y >= 1080:
             sys.exit(0)
 
         screen.fill((0,0,0))
-        pygame.draw.rect(screen,(122,0,122),snake)
         snake_body(snake,body,score)
+        pygame.draw.rect(screen,(0,0,255),snake)
         pygame.draw.rect(screen,(255,0,0),food)
         pygame.display.flip()
