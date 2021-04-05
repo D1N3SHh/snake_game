@@ -20,7 +20,7 @@ def snake_body(head,body,score=0):
 
     #body length
     body.append(pygame.Rect(head))
-    if len(body) > score:
+    if len(body) > score - 1:
         del(body[0])
 
     #body printing
@@ -65,16 +65,19 @@ def run():
     global score
     global screen
     y = 0
-    x = 40
+    x = 0
     body = []
-    direction = "right"
+    direction = "None"
     score = 0
+    first_game = True
 
     #pygame variables
-    snake = pygame.Rect(0,0,40,40)
+    snake = pygame.Rect(1000,520,40,40)
     screen = pygame.display.set_mode((1920,1080), pygame.FULLSCREEN)
     apple = pygame.Rect(40,40,40,40)
     font = pygame.font.Font('freesansbold.ttf', 38)
+    controls = pygame.image.load('assets/controls.png')
+    keys = None
 
     #Main loop
     while True:
@@ -93,24 +96,29 @@ def run():
 
             #Snake turning
             keys = pygame.key.get_pressed()
-            if direction == "down" or direction == "up":
+
+            if direction == "down" or direction == "up" or direction == "None":
                 if keys[pygame.K_a]:
                     x = -40
                     y = 0
                     direction = "left"
+                    first_game = False
                 if keys[pygame.K_d]:
                     x = 40
                     y = 0
                     direction = "right"
-            elif direction == "left" or direction == "right":
+                    first_game = False
+            if direction == "left" or direction == "right" or direction == "None":
                 if keys[pygame.K_w]:
                     y = -40
                     x = 0
                     direction = "up"
+                    first_game = False
                 if keys[pygame.K_s]:
                     y = 40
                     x = 0
                     direction = "down"
+                    first_game = False
 
         #New head position
         time.sleep(0.08)
@@ -146,6 +154,12 @@ def run():
         #Score printing
         score_counter = font.render("Score: " + str(score), True, (255,255,255))
         screen.blit(score_counter, (100,60))
+
+        #Showing controls guide on first game
+        if first_game:
+            x = 0
+            y = 0
+            screen.blit(controls, (0,0))
 
         #Frame printing
         pygame.display.flip()
