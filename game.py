@@ -74,6 +74,7 @@ def run():
     snake = pygame.Rect(0,0,40,40)
     screen = pygame.display.set_mode((1920,1080), pygame.FULLSCREEN)
     apple = pygame.Rect(40,40,40,40)
+    font = pygame.font.Font('freesansbold.ttf', 38)
 
     #Main loop
     while True:
@@ -141,6 +142,10 @@ def run():
         except:
             pass
         pygame.draw.rect(screen,(255,0,0),apple)
+
+        #Score printing
+        score_counter = font.render("Score: " + str(score), True, (255,255,255))
+        screen.blit(score_counter, (100,60))
 
         #Frame printing
         pygame.display.flip()
