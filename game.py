@@ -1,15 +1,17 @@
 #new game module
 
+# libraries
 import pygame
 import sys
 import random
 import time
 
-#pygame.init()
+pygame.init()
 
 #Snake printing and self colision detection function
 def snake_body(head,body,score=0):
     global screen
+
     #colision detection
     if head in body:
         print("game over")
@@ -25,6 +27,33 @@ def snake_body(head,body,score=0):
     for part in body:
         pygame.draw.rect(screen, (0,255,0),part)
 
+#Apple spawning and colision detection function
+def apple_functions(head,apple):
+    global screen, score
+
+    #"is eaten" detection or first iteration
+    if score == 0 or head == apple:
+        score = score + 1
+        spawn = True
+    else:
+        spawn = False
+
+    #Apple spawning function
+    while spawn:
+        height = random.randint(0,1080)
+        width = random.randint(0,1920)
+        
+        #Checking height and width to spawn apple at right place
+        if height%40 == 0 and width%40 == 0:
+            break
+        else:
+            continue
+
+    #Apple returning
+    apple = pygame.Rect(width,height,40,40)
+    return apple
+
+#Main function
 def run():
 
     #Tickrate values
@@ -32,26 +61,23 @@ def run():
     delta = 0.0
     max_tps = 100
 
-    #Constant values
-    y = 10
-    x = 0
-    score = 1
-    body = []
-    direction = "down"
+    #start variables
+    global score
     global screen
+    y = 0
+    x = 40
+    body = []
+    direction = "right"
+    score = 0
 
-    while True:
-        height = random.randint(0,1920)
-        width = random.randint(0,1080)
-        #Checking height and width to spawn apple at right place
-        if height%10 == 0 and width%10 == 0:
-            break
-        else:
-            continue
-    food = pygame.Rect(height,width,10,10)
-    snake = pygame.Rect(800,250,10,10)
+    #pygame variables
+    snake = pygame.Rect(0,0,40,40)
     screen = pygame.display.set_mode((1920,1080), pygame.FULLSCREEN)
+    apple = pygame.Rect(40,40,40,40)
+
+    #Main loop
     while True:
+
         #Checking output keys to exit program
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -68,49 +94,57 @@ def run():
             keys = pygame.key.get_pressed()
             if direction == "down" or direction == "up":
                 if keys[pygame.K_a]:
-                    x = -10
+                    x = -40
                     y = 0
                     direction = "left"
                 if keys[pygame.K_d]:
-                    x = 10
+                    x = 40
                     y = 0
                     direction = "right"
             elif direction == "left" or direction == "right":
                 if keys[pygame.K_w]:
-                    y = -10
+                    y = -40
                     x = 0
                     direction = "up"
                 if keys[pygame.K_s]:
-                    y = 10
+                    y = 40
                     x = 0
                     direction = "down"
-            
+
+        #New head position
+        time.sleep(0.08)
         snake.y += y
         snake.x += x
-        time.sleep(0.05)
-        #Creating apple after eating
-        if snake.y == width and snake.x == height:
-            score +=1
-            while True:
-                height = random.randint(0,1920)
-                width = random.randint(0,1080)
-                if height%10 == 0 and width%10 == 0:
-                    food = pygame.Rect(height,width,10,10)
-                    break
-                else:
-                    continue
-        #This should be deleted #So why is it here?
-        if snake.x > 1921:
-            snake.x = 0
-        if snake.x < 0:
-            snake.x = 1920
-        if snake.y < 0:
-            snake.y = 1080
-        if snake.y > 1080:
-            snake.y = 0
 
+        #Band colison detection
+        if snake.x >= 1920:
+            sys.exit(0)
+        if snake.x < 0:
+            sys.exit(0)
+        if snake.y < 0:
+            sys.exit(0)
+        if snake.y >= 1080:
+            sys.exit(0)
+
+        #Clearing screen
         screen.fill((0,0,0))
-        pygame.draw.rect(screen,(0,255,0),snake)
+
+        #Body drawing and self colision detection
         snake_body(snake,body,score)
-        pygame.draw.rect(screen,(255,0,0),food)
+
+        #Head drawing
+        pygame.draw.rect(screen,(0,0,255),snake)
+
+        #Apple spawning and colision detection function
+        try:
+            apple = apple_functions(snake,apple)
+        except:
+            pass
+        pygame.draw.rect(screen,(255,0,0),apple)
+
+        #Frame printing
         pygame.display.flip()
+
+# init function
+if __name__ == "__main__":
+    run()
