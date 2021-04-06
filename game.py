@@ -8,9 +8,22 @@ import time
 
 pygame.init()
 
+#Rotating function
+def rotate(texture):
+    global direction
+    if direction == "left":
+        surf = pygame.transform.rotate(texture,90)
+    elif direction == "right":
+        surf = pygame.transform.rotate(texture,270)
+    elif direction == "down":
+        surf = pygame.transform.rotate(texture,180)
+    else:
+        surf = texture
+    return surf
+
 #Snake printing and self colision detection function
 def snake_body(head,body,score=0):
-    global screen
+    global screen,surface_body,surface_tail
 
     #colision detection
     if head in body:
@@ -25,14 +38,22 @@ def snake_body(head,body,score=0):
 
     #body printing
     for part in body:
-        pygame.draw.rect(screen, (0,255,0),part)
+        if part == body[0]:
+            surf = surface_tail
+        else:
+            surf = surface_body
+        rect = surf.get_rect()
+        rect.x = part.x
+        rect.y = part.y
+        surf = rotate(surf)
+        screen.blit(surf,rect)
 
 #Apple spawning and colision detection function
 def apple_functions(head,apple):
     global screen, score
 
     #"is eaten" detection or first iteration
-    if score == 0 or head == apple:
+    if score == 1 or head == apple:
         score = score + 1
         spawn = True
     else:
@@ -53,7 +74,10 @@ def apple_functions(head,apple):
             continue
 
     #Apple returning
-    apple = pygame.Rect(width,height,40,40)
+    surface_food = pygame.image.load("assets/apple.png")
+    apple = surface_food.get_rect()
+    apple.x = width
+    apple.y = height
     return apple
 
 #Main function
@@ -67,20 +91,38 @@ def run():
     #start variables
     global score
     global screen
+    global direction
     y = 0
     x = 0
     body = []
     direction = "None"
-    score = 0
+    score = 1
     first_game = True
 
     #pygame variables
-    snake = pygame.Rect(1000,520,40,40)
     screen = pygame.display.set_mode((1920,1080), pygame.FULLSCREEN)
     apple = pygame.Rect(40,40,40,40)
     font = pygame.font.Font('freesansbold.ttf', 38)
     controls = pygame.image.load('assets/controls.png')
+    surface_background = pygame.image.load("assets/game_background.png")
+    rect_background = surface_background.get_rect()
     keys = None
+
+    #textures variables
+    global surface_body
+    global body_texture
+    global surface_tail
+    global tail
+    surface_food = pygame.image.load("assets/apple.png")
+    surface_head = pygame.image.load("assets/head.png")
+    snake = surface_head.get_rect()
+    snake.x = 960
+    snake.y = 560
+    surface_body = pygame.image.load("assets/body.png")
+    body_texture = surface_body.get_rect()
+    surface_tail = pygame.image.load("assets/tail.png")
+    tail = surface_tail.get_rect()
+
 
     #Main loop
     while True:
@@ -138,8 +180,8 @@ def run():
         if snake.y >= 1080:
             sys.exit(0)
 
-        #Clearing screen
-        screen.fill((0,0,0))
+        #Background
+        screen.blit(surface_background,rect_background)
 
         #Showing controls guide on first game
         if first_game:
@@ -152,17 +194,18 @@ def run():
             snake_body(snake,body,score)
 
             #Head drawing
-            pygame.draw.rect(screen,(0,0,255),snake)
+            surf = rotate(surface_head)
+            screen.blit(surf,snake)
 
             #Apple spawning and colision detection function
             try:
                 apple = apple_functions(snake,apple)
             except:
                 pass
-            pygame.draw.rect(screen,(255,0,0),apple)
+            screen.blit(surface_food,apple)
 
             #Score printing
-            score_counter = font.render("Score: " + str(score - 1), True, (255,255,255))
+            score_counter = font.render("Score: " + str(score - 2), True, (255,255,255))
             screen.blit(score_counter, (100,60))
 
         #Frame printing
