@@ -20,7 +20,7 @@ def snake_body(head,body,score=0):
 
     #body length
     body.append(pygame.Rect(head))
-    if len(body) > score - 1:
+    if len(body) > score:
         del(body[0])
 
     #body printing
@@ -45,7 +45,10 @@ def apple_functions(head,apple):
         
         #Checking height and width to spawn apple at right place
         if height%40 == 0 and width%40 == 0:
-            break
+            if height != 1080 and width != 1920:
+                break
+            else:
+                continue
         else:
             continue
 
@@ -138,28 +141,29 @@ def run():
         #Clearing screen
         screen.fill((0,0,0))
 
-        #Body drawing and self colision detection
-        snake_body(snake,body,score)
-
-        #Head drawing
-        pygame.draw.rect(screen,(0,0,255),snake)
-
-        #Apple spawning and colision detection function
-        try:
-            apple = apple_functions(snake,apple)
-        except:
-            pass
-        pygame.draw.rect(screen,(255,0,0),apple)
-
-        #Score printing
-        score_counter = font.render("Score: " + str(score), True, (255,255,255))
-        screen.blit(score_counter, (100,60))
-
         #Showing controls guide on first game
         if first_game:
             x = 0
             y = 0
             screen.blit(controls, (0,0))
+        else:
+
+            #Body drawing and self colision detection
+            snake_body(snake,body,score)
+
+            #Head drawing
+            pygame.draw.rect(screen,(0,0,255),snake)
+
+            #Apple spawning and colision detection function
+            try:
+                apple = apple_functions(snake,apple)
+            except:
+                pass
+            pygame.draw.rect(screen,(255,0,0),apple)
+
+            #Score printing
+            score_counter = font.render("Score: " + str(score - 1), True, (255,255,255))
+            screen.blit(score_counter, (100,60))
 
         #Frame printing
         pygame.display.flip()
