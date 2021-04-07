@@ -10,7 +10,6 @@ pygame.init()
 
 #Rotating function
 def rotate(texture, direction="up"):
-    #global direction
     if direction == "left":
         surf = pygame.transform.rotate(texture,90)
     elif direction == "right":
@@ -22,7 +21,7 @@ def rotate(texture, direction="up"):
     return surf
 
 #Snake printing and self colision detection function
-def snake_body(head,body,score=0):
+def snake_body(head,body,body_direction,score=0):
     global screen, surface_body, surface_tail, direction, previous_direction
 
     #colision detection
@@ -36,6 +35,9 @@ def snake_body(head,body,score=0):
     if len(body) > score:
         del(body[0])
 
+    #body direction
+    body_direction[str(head)] = direction
+
     #body printing
     for part in body:
         if part == body[0]:
@@ -45,18 +47,9 @@ def snake_body(head,body,score=0):
         rect = surf.get_rect()
         rect.x = part.x
         rect.y = part.y
-       
-       #Correct direction
-        if direction == "down" or direction == "up":
-            if part.x != head.x:
-                surf = rotate(surf, previous_direction)
-            else:
-                surf = rotate(surf, direction)
-        if direction == "right" or direction == "left":
-            if part.y != head.y:
-                surf = rotate(surf, previous_direction)
-            else:
-                surf = rotate(surf, direction)
+
+        #Correct direction
+        surf = rotate(surf, body_direction[str(part)])
 
         #Pushing on screen
         screen.blit(surf,rect)
@@ -109,6 +102,7 @@ def run():
     y = 0
     x = 0
     body = []
+    body_direction = {}
     direction = "None"
     score = 10
     first_game = True
@@ -209,7 +203,7 @@ def run():
         else:
 
             #Body drawing and self colision detection
-            snake_body(snake,body,score)
+            snake_body(snake,body,body_direction,score)
 
             #Head drawing
             surf = rotate(surface_head,direction)
