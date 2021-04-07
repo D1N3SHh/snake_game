@@ -9,8 +9,8 @@ import time
 pygame.init()
 
 #Rotating function
-def rotate(texture):
-    global direction
+def rotate(texture, direction="up"):
+    #global direction
     if direction == "left":
         surf = pygame.transform.rotate(texture,90)
     elif direction == "right":
@@ -23,7 +23,7 @@ def rotate(texture):
 
 #Snake printing and self colision detection function
 def snake_body(head,body,score=0):
-    global screen,surface_body,surface_tail
+    global screen, surface_body, surface_tail, direction, previous_direction
 
     #colision detection
     if head in body:
@@ -45,7 +45,20 @@ def snake_body(head,body,score=0):
         rect = surf.get_rect()
         rect.x = part.x
         rect.y = part.y
-        surf = rotate(surf)
+       
+       #Correct direction
+        if direction == "down" or direction == "up":
+            if part.x != head.x:
+                surf = rotate(surf, previous_direction)
+            else:
+                surf = rotate(surf, direction)
+        if direction == "right" or direction == "left":
+            if part.y != head.y:
+                surf = rotate(surf, previous_direction)
+            else:
+                surf = rotate(surf, direction)
+
+        #Pushing on screen
         screen.blit(surf,rect)
 
 #Apple spawning and colision detection function
@@ -92,11 +105,12 @@ def run():
     global score
     global screen
     global direction
+    global previous_direction
     y = 0
     x = 0
     body = []
     direction = "None"
-    score = 1
+    score = 10
     first_game = True
 
     #pygame variables
@@ -146,22 +160,26 @@ def run():
                 if keys[pygame.K_a]:
                     x = -40
                     y = 0
+                    previous_direction = direction
                     direction = "left"
                     first_game = False
                 if keys[pygame.K_d]:
                     x = 40
                     y = 0
+                    previous_direction = direction
                     direction = "right"
                     first_game = False
             if direction == "left" or direction == "right" or direction == "None":
                 if keys[pygame.K_w]:
                     y = -40
                     x = 0
+                    previous_direction = direction            
                     direction = "up"
                     first_game = False
                 if keys[pygame.K_s]:
                     y = 40
                     x = 0
+                    previous_direction = direction        
                     direction = "down"
                     first_game = False
 
@@ -194,7 +212,7 @@ def run():
             snake_body(snake,body,score)
 
             #Head drawing
-            surf = rotate(surface_head)
+            surf = rotate(surface_head,direction)
             screen.blit(surf,snake)
 
             #Apple spawning and colision detection function
