@@ -39,7 +39,7 @@ def rotate_corner(texture, previous_direction, new_direction):
 
 #Snake printing and self colision detection function
 def snake_body(head, body, body_direction, score=0):
-    global screen, surface_body, surface_tail, direction, surface_corner, active_corners, change_direction, previous_direction
+    global screen, surface_body, surface_tail, direction, active_corners, previous_direction
     #colision detection
     if head in body:
         print("game over")
@@ -52,13 +52,6 @@ def snake_body(head, body, body_direction, score=0):
 
     #body direction
     body_direction[str(head)] = direction
-
-    # #corners position and directions
-    # if change_direction:
-    #     surf = surface_corner
-    #     surf = rotate_corner(surf, previous_direction, direction)
-    #     active_corners[str(snake)] = surf
-    #     change_direction = False
 
     #body printing
     for part in body:
@@ -135,15 +128,9 @@ def run():
     global screen
     global direction
     global active_corners
-    change_direction = False
     global previous_direction
-    global previous_block
-    global next_block
-    global corner_rect
     active_corners = {}
     previous_direction = ""
-    previous_block = pygame.Rect(960,560,40,40)
-    corner_rect = pygame.Rect(960,560,40,40)
     y = 0
     x = 0
     body = []
@@ -151,7 +138,7 @@ def run():
     direction = "None"
     score = 100
     first_game = True
-    next_block = True
+    change_direction = False
 
     #pygame variables
     screen = pygame.display.set_mode((1920,1080), pygame.FULLSCREEN)
@@ -167,7 +154,6 @@ def run():
     global body_texture
     global surface_tail
     global tail
-    global surface_corner
     surface_food = pygame.image.load("assets/apple.png")
     surface_head = pygame.image.load("assets/head.png")
     snake = surface_head.get_rect()
@@ -205,14 +191,12 @@ def run():
                     direction = "left"
                     change_direction = True
                     first_game = False
-                    corner_rect = snake
                 if keys[pygame.K_d]:
                     x = 40
                     y = 0
                     direction = "right"
                     change_direction = True
                     first_game = False
-                    corner_rect = snake
             if direction == "left" or direction == "right" or direction == "None":
                 if keys[pygame.K_w]:
                     y = -40
@@ -220,23 +204,19 @@ def run():
                     direction = "up"
                     change_direction = True
                     first_game = False
-                    corner_rect = snake
                 if keys[pygame.K_s]:
                     y = 40
                     x = 0
                     direction = "down"
                     change_direction = True
                     first_game = False
-                    corner_rect = snake
 
-        #corners position and directions
+        #Corners position and directions
         if change_direction:
             surf = surface_corner
             surf = rotate_corner(surf, previous_direction, direction)
             active_corners[str(snake)] = surf
             change_direction = False
-
-
 
         #New head position
         time.sleep(0.1)
