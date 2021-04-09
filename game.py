@@ -70,12 +70,20 @@ def snake_body(head, body, body_direction, score=0):
             surf = surface_body
             surf = rotate(surf, body_direction[str(part)])
 
-        rect = surf.get_rect()
-        rect.x = part.x
-        rect.y = part.y
+        try:
+            rect = surf.get_rect()
+            rect.x = part.x
+            rect.y = part.y
+        except:
+            rect = pygame.Rect(part.x, part.y, 40, 40)
 
         #Pushing on screen
-        screen.blit(surf,rect)
+        try:
+            screen.blit(surf, rect)
+        except:
+            surf = surface_body
+            surf = rotate(surf, body_direction[str(part)])
+            screen.blit(surf, rect)
         
     #Previous values
     previous_direction = direction
@@ -88,7 +96,7 @@ def apple_functions(head,apple):
     global screen, score
 
     #"is eaten" detection or first iteration
-    if score == 1 or head == apple:
+    if score == 0 or head == apple:
         score = score + 1
         spawn = True
     else:
@@ -136,7 +144,7 @@ def run():
     body = []
     body_direction = {}
     direction = "None"
-    score = 100
+    score = 0
     first_game = True
     change_direction = False
 
