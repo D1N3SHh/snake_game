@@ -163,7 +163,7 @@ def run():
     body_texture = surface_body.get_rect()
     surface_tail = pygame.image.load("assets/tail.png")
     tail = surface_tail.get_rect()
-    surface_corner = pygame.image.load('assets/body_right.png')
+    surface_corner = pygame.image.load('assets/corner.png')
 
 
     #Main loop
