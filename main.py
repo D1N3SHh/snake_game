@@ -48,11 +48,12 @@ class main_window(QWidget):
     def quit_function(self):
         sys.exit(0)
 
-
-
-# init function
-if __name__ == "__main__":
+def run():
     app = QApplication(sys.argv)
     window = main_window()
     window.showFullScreen()
     sys.exit(app.exec())
+
+# init function
+if __name__ == "__main__":
+    run()

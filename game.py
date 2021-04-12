@@ -1,5 +1,8 @@
 #new game module
 
+#modules
+import main
+
 # libraries
 import pygame
 import sys
@@ -39,12 +42,10 @@ def rotate_corner(texture, previous_direction, new_direction):
 
 #Snake printing and self colision detection function
 def snake_body(head, body, body_direction, score=0):
-    global screen, surface_body, surface_tail, direction, active_corners, previous_direction
+    global screen, surface_body, surface_tail, direction, active_corners, previous_direction, death
     #colision detection
     if head in body:
-        print("game over")
-        print("score: ",score)
-        sys.exit(0)
+        death = True
 
     #body length
     if len(body) > score:
@@ -126,6 +127,9 @@ def apple_functions(head,apple):
 #Main function
 def run():
 
+    pygame.init()
+
+
     #Tickrate values
     clock = pygame.time.Clock()
     delta = 0.0
@@ -137,6 +141,8 @@ def run():
     global direction
     global active_corners
     global previous_direction
+    global death
+    death = False
     active_corners = {}
     previous_direction = ""
     y = 0
@@ -147,11 +153,13 @@ def run():
     score = 0
     first_game = True
     change_direction = False
+    running = True
 
     #pygame variables
     screen = pygame.display.set_mode((1920,1080), pygame.FULLSCREEN)
     apple = pygame.Rect(40,40,40,40)
-    font = pygame.font.Font('freesansbold.ttf', 38)
+    font = pygame.font.Font('freesansbold.ttf', 50)
+    death_screen_font = pygame.font.Font('freesansbold.ttf', 175)
     controls = pygame.image.load('assets/controls.png')
     surface_background = pygame.image.load("assets/game_background.png")
     rect_background = surface_background.get_rect()
@@ -172,10 +180,10 @@ def run():
     surface_tail = pygame.image.load("assets/tail.png")
     tail = surface_tail.get_rect()
     surface_corner = pygame.image.load('assets/corner.png')
-
+    death_screen = pygame.image.load("assets/death_screen.png")
 
     #Main loop
-    while True:
+    while running:
 
         #Checking output keys to exit program
         for event in pygame.event.get():
@@ -233,13 +241,13 @@ def run():
 
         #Band colison detection
         if snake.x >= 1920:
-            sys.exit(0)
+            death = True
         if snake.x < 0:
-            sys.exit(0)
+            death = True
         if snake.y < 0:
-            sys.exit(0)
+            death = True
         if snake.y >= 1080:
-            sys.exit(0)
+            death = True
 
         #Background
         screen.blit(surface_background,rect_background)
@@ -249,6 +257,17 @@ def run():
             x = 0
             y = 0
             screen.blit(controls, (0,0))
+        #Showing death screen
+        elif death:
+            x = 0
+            y = 0
+            screen.blit(death_screen, (0,0))
+            #Score printing
+            score_counter = death_screen_font.render("Score: " + str(score - 1), True, (0,0,0))
+            screen.blit(score_counter, (670,820))
+            if keys[pygame.K_SPACE]:
+                running = False
+                pygame.quit()
         else:
 
             #Body drawing and self colision detection
@@ -266,11 +285,14 @@ def run():
             screen.blit(surface_food,apple)
 
             #Score printing
-            score_counter = font.render("Score: " + str(score - 2), True, (255,255,255))
-            screen.blit(score_counter, (100,60))
+            score_counter = font.render("Score: " + str(score - 1), True, (0,0,0))
+            screen.blit(score_counter, (80,80))
 
         #Frame printing
-        pygame.display.flip()
+        try:
+            pygame.display.flip()
+        except:
+            break
 
 # init function
 if __name__ == "__main__":
