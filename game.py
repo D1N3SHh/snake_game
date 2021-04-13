@@ -51,6 +51,11 @@ def snake_body(head, body, body_direction, score=0):
     if len(body) > score:
         del(body[0])
 
+    #deleting inactive corners
+    for corner in list(active_corners):
+         if str(corner) not in str(body):
+             del(active_corners[corner])
+
     #body direction
     body_direction[str(head)] = direction
 
