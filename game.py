@@ -51,6 +51,11 @@ def snake_body(head, body, body_direction, score=0):
     if len(body) > score:
         del(body[0])
 
+    #deleting inactive corners
+    for corner in list(active_corners):
+         if str(corner) not in str(body):
+             del(active_corners[corner])
+
     #body direction
     body_direction[str(head)] = direction
 
@@ -159,7 +164,7 @@ def run():
     screen = pygame.display.set_mode((1920,1080), pygame.FULLSCREEN)
     apple = pygame.Rect(40,40,40,40)
     font = pygame.font.Font('freesansbold.ttf', 50)
-    death_screen_font = pygame.font.Font('freesansbold.ttf', 175)
+    death_screen_font = pygame.font.Font('freesansbold.ttf', 170)
     controls = pygame.image.load('assets/controls.png')
     surface_background = pygame.image.load("assets/game_background.png")
     rect_background = surface_background.get_rect()
@@ -264,7 +269,7 @@ def run():
             screen.blit(death_screen, (0,0))
             #Score printing
             score_counter = death_screen_font.render("Score: " + str(score - 1), True, (0,0,0))
-            screen.blit(score_counter, (670,820))
+            screen.blit(score_counter, (590,760))
             if keys[pygame.K_SPACE]:
                 running = False
                 pygame.quit()
