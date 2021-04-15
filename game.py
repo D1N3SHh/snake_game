@@ -1,6 +1,9 @@
-#new game module
+# simple snake game made using pygame
+# authors: D1N3SHh, Naris404, dzideekk
+# https://github.com/D1N3SHh/snake_game
 
-#modules
+
+# main menu module
 import main
 
 # libraries
@@ -11,7 +14,7 @@ import time
 
 pygame.init()
 
-#Rotating function
+# rotating function
 def rotate(texture, direction="up"):
     if direction == "left":
         surf = pygame.transform.rotate(texture,90)
@@ -23,7 +26,8 @@ def rotate(texture, direction="up"):
         surf = texture
     return surf
 
-#Corner rotating function
+
+# corner rotating function
 def rotate_corner(texture, previous_direction, new_direction):
 
     if (previous_direction == "up" and new_direction == "right") or (previous_direction == "left" and new_direction == "down"):
@@ -40,38 +44,40 @@ def rotate_corner(texture, previous_direction, new_direction):
     except:
         pass
 
-#Snake printing and self colision detection function
+
+# snake printing and self colision detection function
 def snake_body(head, body, body_direction, score=0):
     global screen, surface_body, surface_tail, direction, active_corners, previous_direction, death
-    #colision detection
+    
+    # colision detection
     if head in body:
         death = True
 
-    #body length
+    # body length
     if len(body) > score:
         del(body[0])
 
-    #deleting inactive corners
+    # deleting inactive corners
     for corner in list(active_corners):
          if str(corner) not in str(body):
              del(active_corners[corner])
 
-    #body direction
+    # body direction
     body_direction[str(head)] = direction
 
-    #body printing
+    # body printing
     for part in body:
 
-        #Tail
+        # tail
         if part == body[0]:
             surf = surface_tail
             surf = rotate(surf, body_direction[str(part)])
                     
-        #Corners
+        # corners
         elif str(part) in active_corners:
             surf = active_corners[str(part)]
             
-        #Body
+        # body
         else:
             surf = surface_body
             surf = rotate(surf, body_direction[str(part)])
@@ -83,7 +89,7 @@ def snake_body(head, body, body_direction, score=0):
         except:
             rect = pygame.Rect(part.x, part.y, 40, 40)
 
-        #Pushing on screen
+        # pushing on screen
         try:
             screen.blit(surf, rect)
         except:
@@ -91,90 +97,79 @@ def snake_body(head, body, body_direction, score=0):
             surf = rotate(surf, body_direction[str(part)])
             screen.blit(surf, rect)
         
-    #Previous values
+    # previous values
     previous_direction = direction
 
-    #Add new element
+    # add new element
     body.append(pygame.Rect(head))
 
-#Apple spawning and colision detection function
+
+# apple spawning and colision detection function
 def apple_functions(head,apple):
     global screen, score
 
-    #"is eaten" detection or first iteration
+    # "is eaten" detection or first iteration
     if score == 0 or head == apple:
         score = score + 1
         spawn = True
     else:
         spawn = False
 
-    #Apple spawning function
+    # apple spawning function
     while spawn:
         height = random.randint(0,1080)
         width = random.randint(0,1920)
         
-        #Checking height and width to spawn apple at right place
-        if height%40 == 0 and width%40 == 0:
-            if height != 1080 and width != 1920:
-                break
-            else:
-                continue
+        # checking height and width to spawn apple at right place
+        if (height%40 == 0 and width%40 == 0) and (height != 1080 and width != 1920):
+            break
         else:
             continue
 
-    #Apple returning
+    # apple returning
     surface_food = pygame.image.load("assets/apple.png")
     apple = surface_food.get_rect()
     apple.x = width
     apple.y = height
     return apple
 
-#Main function
+
+# main function
 def run():
 
     pygame.init()
 
-
-    #Tickrate values
+    # tickrate values
     clock = pygame.time.Clock()
     delta = 0.0
     max_tps = 100
 
-    #start variables
-    global score
-    global screen
-    global direction
-    global active_corners
-    global previous_direction
-    global death
-    death = False
-    active_corners = {}
-    previous_direction = ""
+    # start variables
+    global score, direction, active_corners, previous_direction, death
+    score = 0
     y = 0
     x = 0
-    body = []
-    body_direction = {}
-    direction = "None"
-    score = 0
+    death = False
     first_game = True
     change_direction = False
     running = True
+    active_corners = {}
+    body = []
+    body_direction = {}
+    direction = "None"
+    previous_direction = "None"
+    keys = None
 
-    #pygame variables
+    # pygame variables
+    global screen, surface_body, body_texture, surface_tail, tail
     screen = pygame.display.set_mode((1920,1080), pygame.FULLSCREEN)
-    apple = pygame.Rect(40,40,40,40)
     font = pygame.font.Font('freesansbold.ttf', 50)
     death_screen_font = pygame.font.Font('freesansbold.ttf', 170)
     controls = pygame.image.load('assets/controls.png')
+    death_screen = pygame.image.load("assets/death_screen.png")
     surface_background = pygame.image.load("assets/game_background.png")
     rect_background = surface_background.get_rect()
-    keys = None
-
-    #textures variables
-    global surface_body
-    global body_texture
-    global surface_tail
-    global tail
+    apple = pygame.Rect(40,40,40,40)
     surface_food = pygame.image.load("assets/apple.png")
     surface_head = pygame.image.load("assets/head.png")
     snake = surface_head.get_rect()
@@ -185,24 +180,24 @@ def run():
     surface_tail = pygame.image.load("assets/tail.png")
     tail = surface_tail.get_rect()
     surface_corner = pygame.image.load('assets/corner.png')
-    death_screen = pygame.image.load("assets/death_screen.png")
 
-    #Main loop
+
+    # main loop
     while running:
 
-        #Checking output keys to exit program
+        # checking output keys to exit program
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit(0)
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 sys.exit(0)
 
-        #Tickrate
+        # tickrate
         delta += clock.tick()/1000.0
         while delta > 1 / max_tps:
             delta -= 1 / max_tps
 
-            #Snake turning
+            # snake turning
             keys = pygame.key.get_pressed()
 
             if direction == "down" or direction == "up" or direction == "None":
@@ -232,19 +227,19 @@ def run():
                     change_direction = True
                     first_game = False
 
-        #Corners position and directions
+        # corners position and directions
         if change_direction:
             surf = surface_corner
             surf = rotate_corner(surf, previous_direction, direction)
             active_corners[str(snake)] = surf
             change_direction = False
 
-        #New head position
+        # new head position
         time.sleep(0.1)
         snake.y += y
         snake.x += x
 
-        #Band colison detection
+        # band colison detection
         if snake.x >= 1920:
             death = True
         if snake.x < 0:
@@ -254,50 +249,54 @@ def run():
         if snake.y >= 1080:
             death = True
 
-        #Background
+        # background
         screen.blit(surface_background,rect_background)
 
-        #Showing controls guide on first game
+        # showing controls guide on first game
         if first_game:
             x = 0
             y = 0
             screen.blit(controls, (0,0))
-        #Showing death screen
+
+        # showing death screen
         elif death:
             x = 0
             y = 0
             screen.blit(death_screen, (0,0))
-            #Score printing
+            # score printing
             score_counter = death_screen_font.render("Score: " + str(score - 1), True, (0,0,0))
             screen.blit(score_counter, (590,760))
             if keys[pygame.K_SPACE]:
                 running = False
                 pygame.quit()
+
+        # normal iteration
         else:
 
-            #Body drawing and self colision detection
+            # body drawing and self colision detection
             snake_body(snake,body,body_direction,score)
 
-            #Head drawing
+            # head drawing
             surf = rotate(surface_head,direction)
             screen.blit(surf,snake)
 
-            #Apple spawning and colision detection function
+            # apple spawning and colision detection function
             try:
                 apple = apple_functions(snake,apple)
             except:
                 pass
             screen.blit(surface_food,apple)
 
-            #Score printing
+            # score printing
             score_counter = font.render("Score: " + str(score - 1), True, (0,0,0))
             screen.blit(score_counter, (80,80))
 
-        #Frame printing
+        # frame printing
         try:
             pygame.display.flip()
         except:
             break
+
 
 # init function
 if __name__ == "__main__":
